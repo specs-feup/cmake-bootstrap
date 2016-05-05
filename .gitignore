@@ -1,1 +1,10 @@
+# General build folder
 build/
+
+# Deps - ignore artifacts
+deps/*/*/*
+
+# Run folder of Java projects
+run/
+# Build folder of Java projects
+bin/
