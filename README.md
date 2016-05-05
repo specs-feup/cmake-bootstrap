@@ -1,2 +1,2 @@
-# cmake-bootstrap
-CMake utilities which include a repository manager for compiled C/C++ libraries
+# cmake-deps
+CMake-based repository manager for compiled C/C++ libraries — Edit
