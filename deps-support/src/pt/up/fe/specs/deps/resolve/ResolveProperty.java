@@ -3,15 +3,15 @@
  * 
  */
 
-package pt.up.fe.specs.deps;
+package pt.up.fe.specs.deps.resolve;
 
-public enum DepsProperty {
+public enum ResolveProperty {
 
 	HOSTS("deps.hosts");
 
 	private final String key;
 
-	private DepsProperty(String key) {
+	private ResolveProperty(String key) {
 		this.key = key;
 	}
 

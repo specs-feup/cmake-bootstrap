@@ -3,7 +3,7 @@
  * 
  */
 
-package pt.up.fe.specs.deps;
+package pt.up.fe.specs.deps.resolve;
 
 import java.io.File;
 import java.util.List;
@@ -13,21 +13,22 @@ import java.util.stream.IntStream;
 
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
+import pt.up.fe.specs.deps.ExitCode;
 import pt.up.fe.specs.deps.utils.IoUtils;
 import pt.up.fe.specs.deps.utils.PropertiesUtils;
 
 public class DepsResolve {
 
-	public static void execute(List<String> args) {
+	public static ExitCode execute(List<String> args) {
 		if (args.size() < 5) {
 			System.out.println(
 					"'resolve' needs 5 arguments: <DEPS_PROPERTIES> <LIB> <SYSTEM> <COMPILER> <ARTIFACTS_DIR>");
-			System.exit(1);
+			return ExitCode.FAILURE;
 		}
 
 		// Load properties and extract hosts
 		Properties properties = PropertiesUtils.load(IoUtils.existingFile(args.get(0)));
-		String hostsRaw = PropertiesUtils.get(properties, DepsProperty.HOSTS);
+		String hostsRaw = PropertiesUtils.get(properties, ResolveProperty.HOSTS);
 		List<String> hosts = parseHosts(hostsRaw);
 
 		String lib = args.get(1);
@@ -35,12 +36,12 @@ public class DepsResolve {
 		String compiler = args.get(3);
 		File artifactFolder = IoUtils.safeFolder(args.get(4));
 
-		int mainReturn = 0;
+		ExitCode mainReturn = ExitCode.SUCCESS;
 		try {
-			resolve(hosts, lib, system, compiler, artifactFolder);
+			mainReturn = resolve(hosts, lib, system, compiler, artifactFolder);
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
-			mainReturn = 1;
+			mainReturn = ExitCode.FAILURE;
 		} finally {
 			File tempFolder = new File(getTempFolderPath());
 			if (tempFolder.isDirectory()) {
@@ -49,7 +50,7 @@ public class DepsResolve {
 			}
 		}
 
-		System.exit(mainReturn);
+		return mainReturn;
 	}
 
 	private static List<String> parseHosts(String hostsRaw) {
@@ -67,7 +68,7 @@ public class DepsResolve {
 		return "./temp";
 	}
 
-	private static void resolve(List<String> hosts, String lib, String system, String compiler, File parentFolder) {
+	private static ExitCode resolve(List<String> hosts, String lib, String system, String compiler, File parentFolder) {
 		// Build the link to retrieve the zip and save to temporary folder
 		String filename = lib + "-" + system + "-" + compiler + ".zip";
 
@@ -94,6 +95,8 @@ public class DepsResolve {
 		// Delete temp folder
 		IoUtils.deleteFolderContents(tempFolder);
 		tempFolder.delete();
+
+		return ExitCode.SUCCESS;
 	}
 
 	private static File downloadLib(String filename, List<String> hosts) {
