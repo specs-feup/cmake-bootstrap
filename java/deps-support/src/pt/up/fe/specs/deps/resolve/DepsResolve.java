@@ -18,6 +18,7 @@
 package pt.up.fe.specs.deps.resolve;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
@@ -42,8 +43,8 @@ public class DepsResolve {
 
 		// Load properties and extract hosts
 		Properties properties = PropertiesUtils.load(IoUtils.existingFile(args.get(0)));
-		String hostsRaw = PropertiesUtils.get(properties, ResolveProperty.HOSTS);
-		List<String> hosts = parseHosts(hostsRaw);
+
+		List<String> hosts = getHosts(properties);
 
 		String lib = args.get(1);
 		String system = args.get(2);
@@ -67,7 +68,14 @@ public class DepsResolve {
 		return mainReturn;
 	}
 
-	private static List<String> parseHosts(String hostsRaw) {
+	private static List<String> getHosts(Properties properties) {
+		String hostsRaw = properties.getProperty(ResolveProperty.HOSTS.getKey());
+
+		if (hostsRaw == null) {
+			LoggingUtils.msgInfo("Empty hosts list, check if property '" + ResolveProperty.HOSTS.getKey() + "' is set");
+			return Collections.emptyList();
+		}
+
 		// Use | as separator
 		String[] hostsArray = hostsRaw.split("\\|");
 

@@ -17,7 +17,9 @@
 
 package pt.up.fe.specs.deps.resolve;
 
-public enum ResolveProperty {
+import org.suikasoft.SharedLibrary.Interfaces.KeyProvider;
+
+public enum ResolveProperty implements KeyProvider<String> {
 
 	HOSTS("deps.hosts");
 
@@ -31,4 +33,10 @@ public enum ResolveProperty {
 	public String toString() {
 		return key;
 	}
+
+	@Override
+	public String getKey() {
+		return key;
+	}
+
 }
