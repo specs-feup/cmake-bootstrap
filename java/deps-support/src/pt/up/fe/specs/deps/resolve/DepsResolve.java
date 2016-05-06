@@ -23,17 +23,19 @@ import java.util.Properties;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.suikasoft.SharedLibrary.IoUtils;
+import org.suikasoft.SharedLibrary.LoggingUtils;
+import org.suikasoft.SharedLibrary.PropertiesUtils;
+
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import pt.up.fe.specs.deps.ExitCode;
-import pt.up.fe.specs.deps.utils.IoUtils;
-import pt.up.fe.specs.deps.utils.PropertiesUtils;
 
 public class DepsResolve {
 
 	public static ExitCode execute(List<String> args) {
 		if (args.size() < 5) {
-			System.out.println(
+			LoggingUtils.msgInfo(
 					"'resolve' needs 5 arguments: <DEPS_PROPERTIES> <LIB> <SYSTEM> <COMPILER> <ARTIFACTS_DIR>");
 			return ExitCode.FAILURE;
 		}
@@ -52,7 +54,7 @@ public class DepsResolve {
 		try {
 			mainReturn = resolve(hosts, lib, system, compiler, artifactFolder);
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			LoggingUtils.msgInfo(e.getMessage());
 			mainReturn = ExitCode.FAILURE;
 		} finally {
 			File tempFolder = new File(getTempFolderPath());
@@ -90,7 +92,7 @@ public class DepsResolve {
 
 		File zipFilename = IoUtils.existingFile(tempFolder, filename);
 		File libFolder = IoUtils.safeFolder(parentFolder, lib + "-" + system + "-" + compiler);
-		System.out.println("Unzipping to '" + libFolder + "'... ");
+		LoggingUtils.msgInfo("Unzipping to '" + libFolder + "'... ");
 
 		// String source = "some/compressed/file.zip";
 		// String destination = "some/destination/folder";
@@ -102,7 +104,7 @@ public class DepsResolve {
 		} catch (ZipException e) {
 			throw new RuntimeException("Could not unzip file '" + zipFilename + "'", e);
 		}
-		System.out.println("Done");
+		LoggingUtils.msgInfo("Done");
 
 		// Delete temp folder
 		IoUtils.deleteFolderContents(tempFolder);

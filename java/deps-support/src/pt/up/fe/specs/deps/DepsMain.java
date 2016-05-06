@@ -24,6 +24,9 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.suikasoft.SharedLibrary.LoggingUtils;
+import org.suikasoft.SharedLibrary.ProcessUtils;
+
 import pt.up.fe.specs.deps.resolve.DepsResolve;
 
 public class DepsMain {
@@ -40,16 +43,17 @@ public class DepsMain {
 	}
 
 	public static void main(String[] args) {
+		ProcessUtils.programStandardInit();
 
 		// First argument is the mode
 		if (args.length < 1) {
-			System.out.println("Needs at least one argument, the operation mode. Current modes: " + MODES.keySet());
+			LoggingUtils.msgInfo("Needs at least one argument, the operation mode. Current modes: " + MODES.keySet());
 			System.exit(ExitCode.FAILURE.getCode());
 		}
 
 		Function<List<String>, ExitCode> mode = MODES.get(args[0]);
 		if (mode == null) {
-			System.out.println("Mode '" + args[0] + "' not available.  Current modes: " + MODES.keySet());
+			LoggingUtils.msgInfo("Mode '" + args[0] + "' not available.  Current modes: " + MODES.keySet());
 			System.exit(ExitCode.FAILURE.getCode());
 		}
 
