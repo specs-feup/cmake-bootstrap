@@ -11,23 +11,24 @@
  * specific language governing permissions and limitations under the License. under the License.
  */
 
-package pt.up.fe.specs.deps.resolve;
+package pt.up.fe.specs.deps.deploy;
 
-import org.suikasoft.SharedLibrary.Interfaces.KeyProvider;
+public enum DeployType {
 
-public enum ResolveProperty implements KeyProvider<String> {
+    SFTP("sftp");
 
-    HOSTS("deps.hosts");
+    private final String type;
 
-    private final String key;
-
-    private ResolveProperty(String key) {
-	this.key = key;
+    private DeployType(String type) {
+	this.type = type;
     }
 
-    @Override
-    public String getKey() {
-	return key;
+    public String getType() {
+	return type;
+    }
+
+    public boolean equals(String typeName) {
+	return type.equals(typeName);
     }
 
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright 2016 SPeCS.
+ * Copyright 2013 SuikaSoft.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -11,23 +11,30 @@
  * specific language governing permissions and limitations under the License. under the License.
  */
 
-package pt.up.fe.specs.deps.resolve;
+package pt.up.fe.specs.deps;
 
-import org.suikasoft.SharedLibrary.Interfaces.KeyProvider;
+import org.suikasoft.SharedLibrary.Interfaces.ResourceProvider;
 
-public enum ResolveProperty implements KeyProvider<String> {
+/**
+ * @author Joao Bispo
+ * 
+ */
+public enum DepsResource implements ResourceProvider {
 
-    HOSTS("deps.hosts");
+    SFTP_TEMPLATE("sftp.xml.template");
 
-    private final String key;
+    private final String resource;
 
-    private ResolveProperty(String key) {
-	this.key = key;
+    private DepsResource(String resource) {
+	this.resource = resource;
     }
 
+    /* (non-Javadoc)
+     * @see org.suikasoft.SharedLibrary.Interfaces.ResourceProvider#getResource()
+     */
     @Override
-    public String getKey() {
-	return key;
+    public String getResource() {
+	return resource;
     }
 
 }

@@ -11,17 +11,21 @@
  * specific language governing permissions and limitations under the License. under the License.
  */
 
-package pt.up.fe.specs.deps.resolve;
+package pt.up.fe.specs.deps.deploy;
 
 import org.suikasoft.SharedLibrary.Interfaces.KeyProvider;
 
-public enum ResolveProperty implements KeyProvider<String> {
+public enum DeployProperty implements KeyProvider<String> {
 
-    HOSTS("deps.hosts");
+    TYPE("type"),
+    HOST("host"),
+    LOCATION("location"),
+    LOGIN("login"),
+    PASS("pass");
 
     private final String key;
 
-    private ResolveProperty(String key) {
+    private DeployProperty(String key) {
 	this.key = key;
     }
 
