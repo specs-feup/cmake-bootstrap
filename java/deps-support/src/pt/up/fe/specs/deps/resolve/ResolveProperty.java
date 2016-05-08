@@ -13,9 +13,9 @@
 
 package pt.up.fe.specs.deps.resolve;
 
-import org.suikasoft.SharedLibrary.Interfaces.KeyProvider;
+import org.suikasoft.SharedLibrary.Interfaces.KeyStringProvider;
 
-public enum ResolveProperty implements KeyProvider<String> {
+public enum ResolveProperty implements KeyStringProvider {
 
     HOSTS("deps.hosts");
 

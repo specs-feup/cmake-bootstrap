@@ -13,9 +13,9 @@
 
 package pt.up.fe.specs.deps.deploy;
 
-import org.suikasoft.SharedLibrary.Interfaces.KeyProvider;
+import org.suikasoft.SharedLibrary.Interfaces.KeyStringProvider;
 
-public enum DeployProperty implements KeyProvider<String> {
+public enum DeployProperty implements KeyStringProvider {
 
     TYPE("type"),
     HOST("host"),

@@ -15,12 +15,11 @@ package pt.up.fe.specs.deps.deploy;
 
 import java.io.File;
 import java.util.List;
-import java.util.Properties;
 
 import org.suikasoft.EclipseDevelopment.Utilities.DeployUtils;
 import org.suikasoft.SharedLibrary.IoUtils;
 import org.suikasoft.SharedLibrary.LoggingUtils;
-import org.suikasoft.SharedLibrary.PropertiesUtils;
+import org.suikasoft.SharedLibrary.utils.Props;
 
 import pt.up.fe.specs.deps.DepsResource;
 import pt.up.fe.specs.deps.ExitCode;
@@ -42,10 +41,10 @@ public class DepsDeploy {
 	File hostPropertiesFile = IoUtils.existingFile(hostId + ".properties");
 
 	// Load properties
-	Properties properties = PropertiesUtils.load(hostPropertiesFile);
+	Props properties = Props.newInstance(hostPropertiesFile);
 
 	// Get deploy type
-	String deployType = PropertiesUtils.getK(properties, DeployProperty.TYPE);
+	String deployType = properties.get(DeployProperty.TYPE);
 
 	if (DeployType.SFTP.equals(deployType)) {
 	    return sftpDeploy(fileToDeploy, hostId, properties);
@@ -55,14 +54,14 @@ public class DepsDeploy {
 
     }
 
-    private static ExitCode sftpDeploy(File fileToDeploy, String hostId, Properties properties) {
+    private static ExitCode sftpDeploy(File fileToDeploy, String hostId, Props properties) {
 
 	String message = "Using a secure connection over SSH. Make sure you are inside a network that permits the communication! (e.g., by using a VPN).";
 	LoggingUtils.msgInfo(message);
 
 	// Get deploy type
-	String host = PropertiesUtils.getK(properties, DeployProperty.HOST);
-	String location = PropertiesUtils.getK(properties, DeployProperty.LOCATION);
+	String host = properties.get(DeployProperty.HOST);
+	String location = properties.get(DeployProperty.LOCATION);
 
 	LoggingUtils.msgInfo("Transfering '" + fileToDeploy + "' to " + host + ":" + location);
 
@@ -87,9 +86,9 @@ public class DepsDeploy {
 	String template = IoUtils.getResource(DepsResource.SFTP_TEMPLATE);
 
 	// Load login and pass
-	Properties hostCreds = PropertiesUtils.load(IoUtils.existingFile(hostId + ".creds"));
-	String login = PropertiesUtils.getK(hostCreds, DeployProperty.LOGIN);
-	String pass = PropertiesUtils.getK(hostCreds, DeployProperty.PASS);
+	Props hostCreds = Props.newInstance(IoUtils.existingFile(hostId + ".creds"));
+	String login = hostCreds.get(DeployProperty.LOGIN);
+	String pass = hostCreds.get(DeployProperty.PASS);
 
 	template = template.replace("<LOGIN>", login);
 	template = template.replace("<PASS>", pass);
