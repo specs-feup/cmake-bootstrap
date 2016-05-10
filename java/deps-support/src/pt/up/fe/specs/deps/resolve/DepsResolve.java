@@ -85,7 +85,7 @@ public class DepsResolve {
 	return "./temp";
     }
 
-    private static ExitCode resolve(List<String> hosts, String lib, String system, String compiler, File parentFolder) {
+    private static ExitCode resolve(List<String> hosts, String lib, String system, String compiler, File artifactsFolder) {
 	// Build the link to retrieve the zip and save to temporary folder
 	String filename = lib + "-" + system + "-" + compiler + ".zip";
 
@@ -94,8 +94,8 @@ public class DepsResolve {
 	// Unzip to correct folder
 
 	File zipFilename = IoUtils.existingFile(tempFolder, filename);
-	File libFolder = IoUtils.safeFolder(parentFolder, lib + "-" + system + "-" + compiler);
-	LoggingUtils.msgInfo("Unzipping to '" + libFolder + "'... ");
+	// File libFolder = IoUtils.safeFolder(parentFolder, lib + "-" + system + "-" + compiler);
+	LoggingUtils.msgInfo("Unzipping to '" + artifactsFolder + "'... ");
 
 	// String source = "some/compressed/file.zip";
 	// String destination = "some/destination/folder";
@@ -103,7 +103,7 @@ public class DepsResolve {
 
 	try {
 	    ZipFile zipFile = new ZipFile(zipFilename);
-	    zipFile.extractAll(IoUtils.getCanonicalPath(libFolder));
+	    zipFile.extractAll(IoUtils.getCanonicalPath(artifactsFolder));
 	} catch (ZipException e) {
 	    throw new RuntimeException("Could not unzip file '" + zipFilename + "'", e);
 	}
