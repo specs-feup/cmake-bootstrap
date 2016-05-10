@@ -53,9 +53,14 @@ public class DepsMain {
 	// Create list with remaining arguments
 	List<String> modeArgs = IntStream.range(1, args.length).mapToObj(i -> args[i]).collect(Collectors.toList());
 
-	ExitCode exitCode = mode.apply(modeArgs);
-
-	System.exit(exitCode.getCode());
+	try {
+	    ExitCode exitCode = mode.apply(modeArgs);
+	    System.exit(exitCode.getCode());
+	} catch (Exception e) {
+	    // Convert exception into a message to the user, return FAILURE
+	    LoggingUtils.msgInfo(e.getMessage());
+	    System.exit(ExitCode.FAILURE.getCode());
+	}
 
     }
 
