@@ -18,16 +18,16 @@ function(deps_resolve lib_name lib_dir)
 	endif()
 	
 	# Check if folder for current system and compiler exist
-	set(${lib_dir} "${DEPS_ARTIFACTS_DIR}/${lib_name}-${CMAKE_SYSTEM_NAME}-${DEPS_ENVIRONMENT}" PARENT_SCOPE)
+	set(current_lib "${DEPS_ARTIFACTS_DIR}/${lib_name}-${CMAKE_SYSTEM_NAME}-${DEPS_ENVIRONMENT}")
+	set(${lib_dir} ${current_lib} PARENT_SCOPE)
+
+	if ("${current_lib}" STREQUAL "")
+		message( FATAL_ERROR "Could not set artifacts folder for library ${lib_name}")
+	endif()
 	
-	
-	if(NOT EXISTS "${${lib_dir}}/")
+	if(NOT EXISTS "${current_lib}/")
 		message("-- [Deps] Resolving dependency '${lib_name}'...")
-		#message(STATUS "ARG0:${DEPS_JAR_PROPS}")
-		#message(STATUS "ARG1:${lib_name}")
-		#message(STATUS "ARG2:${CMAKE_SYSTEM_NAME}")
-		#message(STATUS "ARG3:${DEPS_ENVIRONMENT}")
-		#message(STATUS "ARG4:${DEPS_ARTIFACTS_DIR}")
+		
 		execute_process(COMMAND ${Java_JAVA_EXECUTABLE} -jar ${DEPS_JAR_DIR}/${DEPS_JAR} resolve ${DEPS_JAR_PROPS} ${lib_name} ${CMAKE_SYSTEM_NAME} ${DEPS_ENVIRONMENT} ${DEPS_ARTIFACTS_DIR}
 		WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
 		RESULT_VARIABLE JAVA_RESULT
