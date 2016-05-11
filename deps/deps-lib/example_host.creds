@@ -1,0 +1,3 @@
+# Login/pass to access a host. This file should not be committed
+login = a_login
+pass = a_pass
