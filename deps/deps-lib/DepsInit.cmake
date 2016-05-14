@@ -55,6 +55,9 @@ set(DEPS_ARTIFACTS_DIR "${CMAKE_CURRENT_LIST_DIR}/../artifacts")
 # Load find_libraries
 include("FindLibraries")
 
+# Load deps_find_package
+include("DepsFindPackage")
+
 # Load make_package_target
 include("MakePackageTarget")
 
