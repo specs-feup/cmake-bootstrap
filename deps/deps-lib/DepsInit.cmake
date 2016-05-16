@@ -19,7 +19,7 @@
 
 cmake_minimum_required(VERSION 3.2)
 
-find_package(Java REQUIRED)
+find_package(Java 1.8 REQUIRED COMPONENTS Runtime )
 
 # Set flag, to signal that deps is enabled
 set(DEPS_ENABLED 1)
