@@ -11,7 +11,7 @@
 #   called 'xpto-Linux-gcc4.zip' if we are in Linux with gcc 4.x.y
 #
 
-function(make_package_target name, host_id)
+function(make_package_target name host_id)
 
     # package target
     set(CPACK_GENERATOR "ZIP")
