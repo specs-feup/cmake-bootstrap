@@ -11,7 +11,7 @@
 #   called 'xpto-Linux-gcc4.zip' if we are in Linux with gcc 4.x.y
 #
 
-function(make_package_target name)
+function(make_package_target name, host_id)
 
     # package target
     set(CPACK_GENERATOR "ZIP")
@@ -28,7 +28,7 @@ function(make_package_target name)
 
     # deploy target
     add_custom_target(deploy
-        COMMAND ${Java_JAVA_EXECUTABLE} -jar ${DEPS_JAR} deploy ${DEPS_ZIP_NAME} ${HOST_SPECS_TOOLS}
+        COMMAND ${Java_JAVA_EXECUTABLE} -jar ${DEPS_JAR} deploy ${DEPS_ZIP_NAME} ${host_id}
         WORKING_DIRECTORY ${DEPS_JAR_DIR}
         COMMENT "Deploying ${DEPS_ZIP_NAME}"
         )
@@ -36,7 +36,7 @@ function(make_package_target name)
     
     # upload target
     add_custom_target(upload
-        COMMAND ${Java_JAVA_EXECUTABLE} -jar ${DEPS_JAR} deploy ${DEPS_ZIP_NAME} ${HOST_SPECS_TOOLS}
+        COMMAND ${Java_JAVA_EXECUTABLE} -jar ${DEPS_JAR} deploy ${DEPS_ZIP_NAME} ${host_id}
         WORKING_DIRECTORY ${DEPS_JAR_DIR}
         COMMENT "Uploading ${DEPS_ZIP_NAME}"
         )
