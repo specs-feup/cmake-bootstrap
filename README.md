@@ -59,4 +59,4 @@ The '.creds' file will contain the login and pass in plain view and should not b
 
 ## Using a library
 
-(comming soon)
+(coming soon)
