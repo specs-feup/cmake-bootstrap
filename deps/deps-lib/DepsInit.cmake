@@ -24,18 +24,22 @@ find_package(Java 1.8 REQUIRED COMPONENTS Runtime )
 # Set flag, to signal that deps is enabled
 set(DEPS_ENABLED 1)
 
+# Get Major.Minor version of compiler
+STRING(REGEX REPLACE "\.[1-9]$" "" COMPILER_VERSION_MAJOR_MINOR ${CMAKE_CXX_COMPILER_VERSION})
 
 ## Define compiler name
 # Check GCC
+
 if("${CMAKE_C_COMPILER_ID}" MATCHES "GNU")
 	# Check GCC version
-	if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 5)
-		set(DEPS_COMPILER "gcc5")
-	elseif(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 4)
-		set(DEPS_COMPILER "gcc4")
-	else()
-		message(FATAL_ERROR "-- [Deps] gcc version '${CMAKE_C_COMPILER_VERSION}' not supported (use gcc-4 or gcc-5)")		
-	endif()
+	set(DEPS_COMPILER "gcc${COMPILER_VERSION_MAJOR_MINOR}")	
+	#if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 5)
+		#set(DEPS_COMPILER "gcc5")
+	#elseif(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 4)
+		#set(DEPS_COMPILER "gcc4")
+	#else()
+	#	message(FATAL_ERROR "-- [Deps] gcc version '${CMAKE_C_COMPILER_VERSION}' not supported (use gcc-4 or gcc-5)")		
+	#endif()
 else()
 	message(FATAL_ERROR "-- [Deps] Compiler not supported: '${CMAKE_C_COMPILER_ID}'")
 endif()
