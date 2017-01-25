@@ -48,6 +48,7 @@ public class DepsMain {
         if (mode == null) {
             LoggingUtils.msgInfo("Mode '" + args[0] + "' not available.  Current modes: " + MODES.keySet());
             System.exit(ExitCode.FAILURE.getCode());
+            return; // To avoid warning in Eclipse, cannot detect program ends after System.exit
         }
 
         // Create list with remaining arguments
