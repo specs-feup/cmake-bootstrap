@@ -30,105 +30,106 @@ import pt.up.fe.specs.deps.ExitCode;
 public class DepsResolve {
 
     public static ExitCode execute(List<String> args) {
-	if (args.size() < 5) {
-	    LoggingUtils.msgInfo(
-		    "'resolve' needs 5 arguments: <DEPS_PROPERTIES> <LIB> <SYSTEM> <COMPILER> <ARTIFACTS_DIR>");
-	    return ExitCode.FAILURE;
-	}
+        if (args.size() < 5) {
+            LoggingUtils.msgInfo(
+                    "'resolve' needs 5 arguments: <DEPS_PROPERTIES> <LIB> <SYSTEM> <COMPILER> <ARTIFACTS_DIR>");
+            return ExitCode.FAILURE;
+        }
 
-	// Load properties and extract hosts
-	Props properties = Props.newInstance(IoUtils.existingFile(args.get(0)));
+        // Load properties and extract hosts
+        Props properties = Props.newInstance(IoUtils.existingFile(args.get(0)));
 
-	List<String> hosts = getHosts(properties);
+        List<String> hosts = getHosts(properties);
 
-	String lib = args.get(1);
-	String system = args.get(2);
-	String compiler = args.get(3);
-	File artifactFolder = IoUtils.safeFolder(args.get(4));
+        String lib = args.get(1);
+        String system = args.get(2);
+        String compiler = args.get(3);
+        File artifactFolder = IoUtils.safeFolder(args.get(4));
 
-	ExitCode mainReturn = ExitCode.SUCCESS;
-	try {
-	    mainReturn = resolve(hosts, lib, system, compiler, artifactFolder);
-	} catch (Exception e) {
-	    LoggingUtils.msgInfo(e.getMessage());
-	    mainReturn = ExitCode.FAILURE;
-	} finally {
-	    File tempFolder = new File(getTempFolderPath());
-	    if (tempFolder.isDirectory()) {
-		IoUtils.deleteFolderContents(tempFolder);
-		tempFolder.delete();
-	    }
-	}
+        ExitCode mainReturn = ExitCode.SUCCESS;
+        try {
+            mainReturn = resolve(hosts, lib, system, compiler, artifactFolder);
+        } catch (Exception e) {
+            LoggingUtils.msgInfo(e.getMessage());
+            mainReturn = ExitCode.FAILURE;
+        } finally {
+            File tempFolder = new File(getTempFolderPath());
+            if (tempFolder.isDirectory()) {
+                IoUtils.deleteFolderContents(tempFolder);
+                tempFolder.delete();
+            }
+        }
 
-	return mainReturn;
+        return mainReturn;
     }
 
     private static List<String> getHosts(Props properties) {
-	String hostsRaw = properties.get(ResolveProperty.HOSTS);
+        String hostsRaw = properties.get(ResolveProperty.HOSTS);
 
-	if (hostsRaw == null) {
-	    LoggingUtils.msgInfo("Empty hosts list, check if property '" + ResolveProperty.HOSTS.getKey() + "' is set");
-	    return Collections.emptyList();
-	}
+        if (hostsRaw == null) {
+            LoggingUtils.msgInfo("Empty hosts list, check if property '" + ResolveProperty.HOSTS.getKey() + "' is set");
+            return Collections.emptyList();
+        }
 
-	// Use | as separator
-	String[] hostsArray = hostsRaw.split("\\|");
+        // Use | as separator
+        String[] hostsArray = hostsRaw.split("\\|");
 
-	if (hostsArray.length == 0) {
-	    throw new RuntimeException("Could not find hosts file in value '" + hostsRaw + "'");
-	}
+        if (hostsArray.length == 0) {
+            throw new RuntimeException("Could not find hosts file in value '" + hostsRaw + "'");
+        }
 
-	return IntStream.range(0, hostsArray.length).mapToObj(i -> hostsArray[i].trim()).collect(Collectors.toList());
+        return IntStream.range(0, hostsArray.length).mapToObj(i -> hostsArray[i].trim()).collect(Collectors.toList());
     }
 
     private static final String getTempFolderPath() {
-	return "./temp";
+        return "./temp";
     }
 
-    private static ExitCode resolve(List<String> hosts, String lib, String system, String compiler, File artifactsFolder) {
-	// Build the link to retrieve the zip and save to temporary folder
-	String filename = lib + "-" + system + "-" + compiler + ".zip";
+    private static ExitCode resolve(List<String> hosts, String lib, String system, String compiler,
+            File artifactsFolder) {
+        // Build the link to retrieve the zip and save to temporary folder
+        String filename = lib + "-" + system + "-" + compiler + ".zip";
 
-	File tempFolder = downloadLib(filename, hosts);
+        File tempFolder = downloadLib(filename, hosts);
 
-	// Unzip to correct folder
+        // Unzip to correct folder
 
-	File zipFilename = IoUtils.existingFile(tempFolder, filename);
-	// File libFolder = IoUtils.safeFolder(parentFolder, lib + "-" + system + "-" + compiler);
-	LoggingUtils.msgInfo("Unzipping to '" + artifactsFolder + "'... ");
+        File zipFilename = IoUtils.existingFile(tempFolder, filename);
+        // File libFolder = IoUtils.safeFolder(parentFolder, lib + "-" + system + "-" + compiler);
+        LoggingUtils.msgInfo("Unzipping to '" + artifactsFolder + "'... ");
 
-	// String source = "some/compressed/file.zip";
-	// String destination = "some/destination/folder";
-	// String password = "password";
+        // String source = "some/compressed/file.zip";
+        // String destination = "some/destination/folder";
+        // String password = "password";
 
-	try {
-	    ZipFile zipFile = new ZipFile(zipFilename);
-	    zipFile.extractAll(IoUtils.getCanonicalPath(artifactsFolder));
-	} catch (ZipException e) {
-	    throw new RuntimeException("Could not unzip file '" + zipFilename + "'", e);
-	}
-	LoggingUtils.msgInfo("Done");
+        try {
+            ZipFile zipFile = new ZipFile(zipFilename);
+            zipFile.extractAll(IoUtils.getCanonicalPath(artifactsFolder));
+        } catch (ZipException e) {
+            throw new RuntimeException("Could not unzip file '" + zipFilename + "'", e);
+        }
+        LoggingUtils.msgInfo("Done");
 
-	// Delete temp folder
-	IoUtils.deleteFolderContents(tempFolder);
-	tempFolder.delete();
+        // Delete temp folder
+        IoUtils.deleteFolderContents(tempFolder);
+        tempFolder.delete();
 
-	return ExitCode.SUCCESS;
+        return ExitCode.SUCCESS;
     }
 
     private static File downloadLib(String filename, List<String> hosts) {
-	// Try all hosts until link is found
-	for (String host : hosts) {
-	    String link = host + filename;
+        // Try all hosts until link is found
+        for (String host : hosts) {
+            String link = host + filename;
 
-	    File tempFolder = IoUtils.safeFolder(getTempFolderPath());
-	    if (IoUtils.download(link, tempFolder)) {
-		return tempFolder;
-	    }
+            File tempFolder = IoUtils.safeFolder(getTempFolderPath());
+            if (IoUtils.download(link, tempFolder)) {
+                return tempFolder;
+            }
 
-	}
+        }
 
-	throw new RuntimeException("Did not find library '" + filename + "' for download");
+        throw new RuntimeException("Did not find library '" + filename + "' for download");
     }
 
 }

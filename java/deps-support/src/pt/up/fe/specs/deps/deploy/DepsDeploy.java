@@ -27,55 +27,55 @@ import pt.up.fe.specs.deps.ExitCode;
 public class DepsDeploy {
 
     public static ExitCode execute(List<String> args) {
-	// First argument is the filename to transfer, second argument is the id of the host
-	if (args.size() < 2) {
-	    LoggingUtils.msgInfo(
-		    "'deploy' needs 2 arguments: <FILE_TO_DEPLOY> <HOST_ID>");
-	    return ExitCode.FAILURE;
-	}
+        // First argument is the filename to transfer, second argument is the id of the host
+        if (args.size() < 2) {
+            LoggingUtils.msgInfo(
+                    "'deploy' needs 2 arguments: <FILE_TO_DEPLOY> <HOST_ID>");
+            return ExitCode.FAILURE;
+        }
 
-	File fileToDeploy = IoUtils.existingFile(args.get(0));
-	String hostId = args.get(1);
+        File fileToDeploy = IoUtils.existingFile(args.get(0));
+        String hostId = args.get(1);
 
-	// Load properties file with same name as the host id
-	File hostPropertiesFile = IoUtils.existingFile(hostId + ".properties");
+        // Load properties file with same name as the host id
+        File hostPropertiesFile = IoUtils.existingFile(hostId + ".properties");
 
-	// Load properties
-	Props properties = Props.newInstance(hostPropertiesFile);
+        // Load properties
+        Props properties = Props.newInstance(hostPropertiesFile);
 
-	// Get deploy type
-	String deployType = properties.get(DeployProperty.TYPE);
+        // Get deploy type
+        String deployType = properties.get(DeployProperty.TYPE);
 
-	if (DeployType.SFTP.equals(deployType)) {
-	    return sftpDeploy(fileToDeploy, hostId, properties);
-	}
+        if (DeployType.SFTP.equals(deployType)) {
+            return sftpDeploy(fileToDeploy, hostId, properties);
+        }
 
-	throw new RuntimeException("Deploy type '" + deployType + "' not defined");
+        throw new RuntimeException("Deploy type '" + deployType + "' not defined");
 
     }
 
     private static ExitCode sftpDeploy(File fileToDeploy, String hostId, Props properties) {
 
-	String message = "Using a secure connection over SSH. Make sure you are inside a network that permits the communication! (e.g., by using a VPN).";
-	LoggingUtils.msgInfo(message);
+        String message = "Using a secure connection over SSH. Make sure you are inside a network that permits the communication! (e.g., by using a VPN).";
+        LoggingUtils.msgInfo(message);
 
-	// Get deploy type
-	String host = properties.get(DeployProperty.HOST);
-	String location = properties.get(DeployProperty.LOCATION);
+        // Get deploy type
+        String host = properties.get(DeployProperty.HOST);
+        String location = properties.get(DeployProperty.LOCATION);
 
-	LoggingUtils.msgInfo("Transfering '" + fileToDeploy + "' to " + host + ":" + location);
+        LoggingUtils.msgInfo("Transfering '" + fileToDeploy + "' to " + host + ":" + location);
 
-	// Get ANT script
-	String antSftp = buildSftpScript(fileToDeploy, hostId, host, location);
+        // Get ANT script
+        String antSftp = buildSftpScript(fileToDeploy, hostId, host, location);
 
-	// Save script
-	File sftpScript = new File(DeployUtils.getTempFolder(), "sftp.xml");
+        // Save script
+        File sftpScript = new File(DeployUtils.getTempFolder(), "sftp.xml");
 
-	IoUtils.write(sftpScript, antSftp);
+        IoUtils.write(sftpScript, antSftp);
 
-	DeployUtils.runAnt(sftpScript);
+        DeployUtils.runAnt(sftpScript);
 
-	return ExitCode.SUCCESS;
+        return ExitCode.SUCCESS;
     }
 
     /**
@@ -83,21 +83,21 @@ public class DepsDeploy {
      * @return
      */
     private static String buildSftpScript(File fileToSend, String hostId, String host, String location) {
-	String template = IoUtils.getResource(DepsResource.SFTP_TEMPLATE);
+        String template = IoUtils.getResource(DepsResource.SFTP_TEMPLATE);
 
-	// Load login and pass
-	Props hostCreds = Props.newInstance(IoUtils.existingFile(hostId + ".creds"));
-	String login = hostCreds.get(DeployProperty.LOGIN);
-	String pass = hostCreds.get(DeployProperty.PASS);
+        // Load login and pass
+        Props hostCreds = Props.newInstance(IoUtils.existingFile(hostId + ".creds"));
+        String login = hostCreds.get(DeployProperty.LOGIN);
+        String pass = hostCreds.get(DeployProperty.PASS);
 
-	template = template.replace("<LOGIN>", login);
-	template = template.replace("<PASS>", pass);
-	template = template.replace("<HOST>", host);
-	template = template.replace("<DESTINATION_FOLDER>", location);
+        template = template.replace("<LOGIN>", login);
+        template = template.replace("<PASS>", pass);
+        template = template.replace("<HOST>", host);
+        template = template.replace("<DESTINATION_FOLDER>", location);
 
-	template = template.replace("<FILE>", fileToSend.getAbsolutePath());
+        template = template.replace("<FILE>", fileToSend.getAbsolutePath());
 
-	return template;
+        return template;
     }
 
 }

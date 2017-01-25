@@ -26,7 +26,7 @@ public enum DepsResource implements ResourceProvider {
     private final String resource;
 
     private DepsResource(String resource) {
-	this.resource = resource;
+        this.resource = resource;
     }
 
     /* (non-Javadoc)
@@ -34,7 +34,7 @@ public enum DepsResource implements ResourceProvider {
      */
     @Override
     public String getResource() {
-	return resource;
+        return resource;
     }
 
 }

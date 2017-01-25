@@ -30,37 +30,37 @@ public class DepsMain {
 
     private static final Map<String, Function<List<String>, ExitCode>> MODES;
     static {
-	MODES = new HashMap<>();
-	MODES.put("resolve", DepsResolve::execute);
-	MODES.put("deploy", DepsDeploy::execute);
+        MODES = new HashMap<>();
+        MODES.put("resolve", DepsResolve::execute);
+        MODES.put("deploy", DepsDeploy::execute);
     }
 
     public static void main(String[] args) {
-	ProcessUtils.programStandardInit();
+        ProcessUtils.programStandardInit();
 
-	// First argument is the mode
-	if (args.length < 1) {
-	    LoggingUtils.msgInfo("Needs at least one argument, the operation mode. Current modes: " + MODES.keySet());
-	    System.exit(ExitCode.FAILURE.getCode());
-	}
+        // First argument is the mode
+        if (args.length < 1) {
+            LoggingUtils.msgInfo("Needs at least one argument, the operation mode. Current modes: " + MODES.keySet());
+            System.exit(ExitCode.FAILURE.getCode());
+        }
 
-	Function<List<String>, ExitCode> mode = MODES.get(args[0]);
-	if (mode == null) {
-	    LoggingUtils.msgInfo("Mode '" + args[0] + "' not available.  Current modes: " + MODES.keySet());
-	    System.exit(ExitCode.FAILURE.getCode());
-	}
+        Function<List<String>, ExitCode> mode = MODES.get(args[0]);
+        if (mode == null) {
+            LoggingUtils.msgInfo("Mode '" + args[0] + "' not available.  Current modes: " + MODES.keySet());
+            System.exit(ExitCode.FAILURE.getCode());
+        }
 
-	// Create list with remaining arguments
-	List<String> modeArgs = IntStream.range(1, args.length).mapToObj(i -> args[i]).collect(Collectors.toList());
+        // Create list with remaining arguments
+        List<String> modeArgs = IntStream.range(1, args.length).mapToObj(i -> args[i]).collect(Collectors.toList());
 
-	try {
-	    ExitCode exitCode = mode.apply(modeArgs);
-	    System.exit(exitCode.getCode());
-	} catch (Exception e) {
-	    // Convert exception into a message to the user, return FAILURE
-	    LoggingUtils.msgInfo(e.getMessage());
-	    System.exit(ExitCode.FAILURE.getCode());
-	}
+        try {
+            ExitCode exitCode = mode.apply(modeArgs);
+            System.exit(exitCode.getCode());
+        } catch (Exception e) {
+            // Convert exception into a message to the user, return FAILURE
+            LoggingUtils.msgInfo(e.getMessage());
+            System.exit(ExitCode.FAILURE.getCode());
+        }
 
     }
 

@@ -20,15 +20,15 @@ public enum DeployType {
     private final String type;
 
     private DeployType(String type) {
-	this.type = type;
+        this.type = type;
     }
 
     public String getType() {
-	return type;
+        return type;
     }
 
     public boolean equals(String typeName) {
-	return type.equals(typeName);
+        return type.equals(typeName);
     }
 
 }

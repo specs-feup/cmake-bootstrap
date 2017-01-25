@@ -22,12 +22,12 @@ public enum ResolveProperty implements KeyStringProvider {
     private final String key;
 
     private ResolveProperty(String key) {
-	this.key = key;
+        this.key = key;
     }
 
     @Override
     public String getKey() {
-	return key;
+        return key;
     }
 
 }

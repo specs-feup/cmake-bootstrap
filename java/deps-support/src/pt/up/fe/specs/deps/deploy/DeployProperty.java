@@ -26,12 +26,12 @@ public enum DeployProperty implements KeyStringProvider {
     private final String key;
 
     private DeployProperty(String key) {
-	this.key = key;
+        this.key = key;
     }
 
     @Override
     public String getKey() {
-	return key;
+        return key;
     }
 
 }
